@@ -1,0 +1,134 @@
+Scenario A
+
+3542/3542 [==============================] - 14s 4ms/step - loss: 0.0061 - accuracy: 0.9983
+Print the loss and the accuracy of the model on the dataset
+Loss [0,1]: 0.0061 Accuracy [0,1]: 0.9983
+Print the Confusion Matrix:
+[ TN, FP ]
+[ FN, TP ]=
+[[9635   76]
+ [1720 5807]]
+Plot the accuracy
+
+
+Scenario B
+
+odel.make_test_function.<locals>.test_function at 0x7fa592360a70> and will run it as-is.
+Please report this to the TensorFlow team. When filing the bug, set the verbosity to 10 (on Linux, `export AUTOGRAPH_VERBOSITY=10`) and attach the full output.
+Cause: 
+To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
+3540/3540 [==============================] - 11s 3ms/step - loss: 0.0030 - accuracy: 0.9990
+Print the loss and the accuracy of the model on the dataset
+Loss [0,1]: 0.0030 Accuracy [0,1]: 0.9990
+WARNING:tensorflow:AutoGraph could not transform <function Model.make_predict_function.<locals>.predict_function at 0x7fa5922bc4d0> and will run it as-is.
+Please report this to the TensorFlow team. When filing the bug, set the verbosity to 10 (on Linux, `export AUTOGRAPH_VERBOSITY=10`) and attach the full output.
+Cause: 
+To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
+WARNING: AutoGraph could not transform <function Model.make_predict_function.<locals>.predict_function at 0x7fa5922bc4d0> and will run it as-is.
+Please report this to the TensorFlow team. When filing the bug, set the verbosity to 10 (on Linux, `export AUTOGRAPH_VERBOSITY=10`) and attach the full output.
+Cause: 
+To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
+Print the Confusion Matrix:
+[ TN, FP ]
+[ FN, TP ]=
+[[6699 3012]
+ [3097 2209]]
+Plot the accuracy
+Plot the loss
+
+
+
+Scenario C
+
+full output.
+Cause: 
+To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
+Print the Confusion Matrix:
+[ TN, FP ]
+[ FN, TP ]=
+[[9122  589]
+ [1109 8839]]
+Plot the accuracy
+
+
+Sampling -2 
+
+Scenario A
+
+Cause: 
+To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
+Print the Confusion Matrix:
+[ TN, FP ]
+[ FN, TP ]=
+[[9641   70]
+ [1700 5827]]
+Plot the accuracy
+Plot the loss
+
+
+
+Scenario B
+
+ause: 
+To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
+Print the Confusion Matrix:
+[ TN, FP ]
+[ FN, TP ]=
+[[8551 1160]
+ [3082 2224]]
+Plot the accuracy
+Plot the loss
+
+
+Scenario C
+
+int the loss and the accuracy of the model on the dataset
+Loss [0,1]: 0.0103 Accuracy [0,1]: 0.9966
+Print the Confusion Matrix:
+[ TN, FP ]
+[ FN, TP ]=
+[[9028  683]
+ [1887 8061]]
+Plot the accuracy
+Plot the loss
+
+
+
+Sampling -3
+
+
+Scenario A 
+
+To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
+Print the Confusion Matrix:
+[ TN, FP ]
+[ FN, TP ]=
+[[9189  522]
+ [1739 5788]]
+Plot the accuracy
+Plot the loss
+
+
+Scenario B
+
+Cause: 
+To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
+Print the Confusion Matrix:
+[ TN, FP ]
+[ FN, TP ]=
+[[8482 1229]
+ [2651 2655]]
+Plot the accuracy
+Plot the loss
+
+Scenario C 
+
+@tf.autograph.experimental.do_not_convert
+Print the Confusion Matrix:
+[ TN, FP ]
+[ FN, TP ]=
+[[8892  819]
+ [2328 7620]]
+Plot the accuracy
+Plot the loss
+
