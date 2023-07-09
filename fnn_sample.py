@@ -82,6 +82,10 @@ X = onehotencoder.fit_transform(X).toarray()
 #X_train = sc.fit_transform(X_train)  # Scaling to the range [0,1]
 #X_test = sc.fit_transform(X_test)
 
+# import the file and use the method get_processed_data method . The idea is to comment out the existing code and use this method to generate the X_train, X_test 
+# and other info. And in that method we will pass the CategoryMapping generated file present inside the path /home/ubuntu/project4/lab-cs-ml-00301/ScenarioC/Total/
+
+
 import data_preprocessor as dp
 
 
