@@ -1,0 +1,270 @@
+Container is a way to package an application with all the packages and softwares they need, that package is portable just like any other artifact
+
+the portability and all dependencies packed together makes development and deployment every efficient
+
+containers do need some kind of storage, the containers live in container repository, its a place to host your containers, generally there is private and public container
+
+there are official and unofficial docker images present in the repository
+
+Before containers came in, we would have installed most services in your os, like postgresql redis so every developer needs to have them installed and configured and for eah different OS we have different steps to be followed and as a result error possibility is high
+
+the more the number of applications the more installations the more problems
+
+using container , its an own isolated environment where you can package all the software together inside it.
+
+we can run two different versions of same app
+
+technically container is made of layers of images, mostly linux base image like apline, these base images need to be small to have the container be small in size,
+on top of base image we have application image that runs on top of the base image
+
+to fetch image file from the docker repo using docker pull
+if we want specific version we use : operator
+
+to see the docker images we use the command docker images command
+
+docker image is the actual package, an artifact that can be moved around, container is when the application is started
+
+docker stop <container id> stops the image
+
+*****************************docker vs virtual machine********************
+
+OS have 2 layers.. OS Kernel and applications layer.. OS kernel communicates with hardware and the applications run on the OS Layer. 
+
+Docker virtualizes the application layer, it uses the kernel of the host,, VM has its own applications and kernel OS Layer, it boots up its own kernel
+
+docker images are much smaller and much faster than VM , compatibility issue is another thing, like we cant run linux images on the windows OS, so work around is to have docker toolbox , this is until windows 10
+
+Basic commands in docker are:
+
+docker pull  -- pull image
+docker start  -- start container
+docker run
+docker stop   -- stop container
+docker ps -- check running containers
+
+container is running environment for image, container has a port binded to it so it enables communicating to application running inside the container, the container possess a virtual file system
+
+tag is like the version of that image that we have pulled
+
+docker run -d <docker image> is used to run the docker in a detached manner
+
+docker ps -a shows all the containers that are running and not running
+
+To start 2 same docker images with different versions, we can do it
+
+we cant bind two images ports to the same host port
+
+to bind images to a different port we can use the command
+			
+docker run -p<port of host>:<port of the container> <docker image>
+
+************************ debugging ccontainers *************************
+
+docker logs <container id>
+
+docker exec -it
+
+to rename the docker image file we use --name flag
+
+
+to navigate to the terminal of the docker image we can use docker exec -it <container_id> /bin/bash   or we can use docker exec -it <container_id> /bin/sh
+
+using this way we can check the Virtual folder structure of the docker image
+
+
+difference btw docker run and start is that in run we create a new image and run it, with docker start we dont work with images but we work with containers
+
+like docker run redis:latest to run a redis image and now if we stop the container and want to run it again we use the docker start <container_id>
+
+************************  CI / CD Flow ************************************
+
+so first after we create our js file, we shall commit the code into the git and then it shall trigger a CI that sees jenkins build produce artifact and then docker image is created by jenkins and this is pushed to private repository
+
+so for us in order to connect to one docker image that runs mongo db and have another docker image where we run our node js program that needs to access this docker image based mongo db 
+we neeed to understand the concept of docker network
+
+docker creates an isolated docker network where the containers are running in, if we deploy the docker images like mongo db and mongo express in the same docker network then they can 
+communicate using the name without any localhost , port etc
+
+now for the node js that runs the node server it is connecting to this db, it shall use the localhost and port, but if we have node js image that runs the js file in the same isolated network as the mongo db and mongo express image files then it connects to these mongo db images using default network
+
+to check the docker network we use the command docker network ls
+
+we can create a new docker network using command:
+docker network create mongo-network
+
+now we need to assign the network when we run the docker image  , if we run the mongodb image then command is , we can define root uswrname and its password too :
+
+docker run -p 27017:27017 -d -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=secret --name mongodb  --net mongo-network mongo  
+
+***************************************** using docker compose to run multiple containers ********************************************
+
+docker compose we can take whole of commands and map it to a file so we have structured command
+
+strutured way to contain the docker commands
+
+mongo-docker-compose.yml
+
+version:3
+services:
+    mongodb: // this would be the container name
+        image: mongo // then name of the docker image
+        ports:
+            -27017:27017
+        environment: // the env variables related to the docker image
+            - MONGO_INITDB_ROOT_USERNAME=admin
+            - MONGO_INITDB_ROOT_PASSWORD=password
+    mongo-express:
+        image: mongo-express
+        ports:
+            - 8080:8081
+        environment:
+            - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+            - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
+            - ME_CONFIG_MONGODB_SERVER=mongodb
+            
+            
+to start the docker containers using the docker compose files is: -f is filename and up is to get the images up or started
+docker-compose -f mongo-docker-compose.yml up  
+
+docker-compose -f mongo-docker-compose.yml down // this also removes the network 
+
+docker-compose will create a default isolated docker network when we run the docker compose , wwe can do docker network ls to see new docker network
+
+docker volumes makes it possible to have persistance to maintain docker consistency when container restarts
+
+******************************************* using Dockerfile *********************************
+
+we try to deploy the js code , it needs to be packaged in its own image, so to do this we use Dockerfile
+
+Jenkins in CICD what it does is its builds the application after the code is committed into git, it builds the application and then packages into a docker image, and then it is pushed into a docker repository
+
+we will do this similarly into the local laptop
+
+dockerfile is a blueprint for creating the docker images
+
+FROM node:13-alpine // what image you are building you bse it on another image, here since we have JS app with node js packages we build on the node image, so we will have node installed into our image
+
+ENV MONGO_DB_USERNAME=admin MONGO_DB_PWD=password  // environment variables
+
+RUN mkdir -p /home/app // using run we can execute any linux command, so here /home/app folder created
+
+COPY . /home/app // this will copy all the files inside the folder into the /home/app folder its more like COPY SRC DEST syntax
+
+CMD ["node" , "/home/app/server.js"] // this will run the command inside the container CMD is an entry point command , to tell this is the entry point
+
+//every image is based out of some base image
+
+// app:1.0 is our project image , this is built on node:13-alpine base image and this node image is built on apline:3.10 image 
+
+// Dockerfile walways needs to be saved as this 
+
+******************************************* build docker image using docker file ***********************************
+
+-t is to give name to the docker image file and . means that the DockerFile resides within this directory
+
+docker build -t my-app:1.0 . 
+
+Jnekins the DockerFile we commit and jenkins create the docker image based on that file 
+
+whenever we make changes to the Dockerfile we have to rebuild the image
+
+so to delete image we use 
+
+docker rmi <image_id> 
+
+but before we close the image based container 
+
+****************************************** Private Docker registry ************************************************
+
+to have a private docker registry, or docke private repository  created we can use the aws's Amazon ECR (Elastic Container Registry)
+
+
+so we chose ECR service on the AWS, Choose get started and then we give a repo name.. we can give as my-app and then create a repository ..one repo can have only one image with different versions but one image needs to be in one repository
+
+to push our local image into this repo , we have view push commands but before that in local we have to login into the private repository
+
+we need aws in CLI and have credentials applied or configured into it
+
+and then we login to the repository
+
+then we need to tag local image with the private repo 
+
+so we use docker tag to rename the local image to the one how it is there in the AWS docker repository based image name
+
+and when we do docker images we see local image is renamed
+
+then we do docker push 
+
+and it will push the layers of the docker image into the private repo
+
+******************************************* deploy the containerized app ******************************************
+
+all we do is in the docker compose yml file we shall add this new docker image which is pulled from aws ecr instance which contains this image 
+
+version:3
+services:
+    my-app:
+        image: 66457403862.dkr.ecr.eu-central-1.amazonaws.com/my-app:1.0
+        ports:
+            - 3000:3000
+    mongodb: // this would be the container name
+        image: mongo // then name of the docker image
+        ports:
+            - 27017:27017
+        environment: // the env variables related to the docker image
+            - MONGO_INITDB_ROOT_USERNAME=admin
+            - MONGO_INITDB_ROOT_PASSWORD=password
+    mongo-express:
+        image: mongo-express
+        ports:
+            - 8080:8081
+        environment:
+            - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+            - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
+            - ME_CONFIG_MONGODB_SERVER=mongodb
+
+
+this docker compose file will deploy all the files
+
+to run it we use the command docker-compose -f mongo.yaml up 
+
+************************************************ Persisting Data with volumes ****************************************
+
+Docker volumes are used for data persistance in docker, if we have DB or other stateful systems we need docker volumes 
+
+When do we need docker volumes? we have data base container and if we remove the container then data is lost so we want to save the changes, so docker volumes work by plugging physical file system path to the containeers virtual file system of Docker, so in other words FOlder in the physical host file system is mounted into the virtual file system of docker
+
+what the container writes it will get replicated automatically into the host file system , so container restarts it will get the data from here
+
+we can define the docker volumes using the flag -v
+-v /home/mount/data:/var/lib/mysql/data 
+
+so we decide where on the host file system the reference is made
+
+another way is folder can be created automatically without us explicitly mentioning it
+
+-v /var/lib/mysql/data
+
+another way is to give name volumes , so they can referenced by name without knowing the path, we use the name volumes in prod env
+
+-v name:/var/lib/mysql/data
+
+so in the docker compose we define the volumes as :
+
+	volumes:
+	    - db-data:/var/lib/mysql/data
+
+
+at the end of the docker compose file we shall list all the docker volumes that we have defined
+
+volumes:
+    db-data:
+        driver: local
+        
+default place where the docker volumes located on the host machines: 
+
+windows : c;\ProgramData\docker\volmunes
+ubuntu/linux/mac : /var/lib/docker/volumes
+
+  
